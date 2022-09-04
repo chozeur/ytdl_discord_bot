@@ -5,13 +5,7 @@
 *	Install necessary modules from ***requirements.txt***
 	*	`pip install -r requirements.txt`
 
-*	Apply corresponding changes in ***config.py***
-
-	* Run `bash config.sh`
-
-	* Or set manualy :
-		*	`token` : Your bot's private token
-		*	`guildId` : your server's ID
+*	Run `bash config.sh` to set your bot's private token in ***config.py***
 
 *	Launch the bot with `python3.8 main.py`
 

@@ -48,7 +48,6 @@ async def	on_ready():
 @bot.command(
 	name = "ytdl",
 	description = "Generate a download link for the given YouTube vvideo URL",
-	scope = config.guildId,
 	options = [
 		interactions.Option(
 			name = "url",
