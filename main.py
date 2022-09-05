@@ -15,29 +15,54 @@ from	yt_dlp.utils	import	DownloadError
 from	anonfile		import	AnonFile
 import	config
 
-bot = interactions.Client(token = config.token)
-anon = AnonFile()
+bot=interactions.Client(token=config.token)
+anon=AnonFile()
+
+dlId=0
 
 def	timeLog():
 	return (time.strftime("%H:%M:%S", time.localtime()))
 
 def	Find(string):
-	regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-	url = re.findall(regex,string)
+	regex=r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+	url=re.findall(regex,string)
 	return [x[0] for x in url]
 
-def	youtube_download(url: str)->str:
-	ydl_opt = {}
+def	youtube_download_mp3(url: str)->str:
+	global	dlId
+	dlId += 1
+	ydl_opt={
+	'outtmpl': './%(id)s.mp3',
+	'format': 'mp3/bestaudio/best',
+	'postprocessors': [{
+		'key': 'FFmpegExtractAudio',
+		'preferredcodec': 'mp3',
+	}]
+	}
 	with YoutubeDL(ydl_opt) as ydl:
 		try:
-			info = ydl.extract_info(url, download = True)
+			info=ydl.extract_info(url, download=True)
 		except DownloadError:
 			return ('error')
-		title = info.get('title', None) + " [" + info.get('id', None) + "]." + info.get('ext', None)
+		title=info.get('id', None) + ".mp3"
+		return (title)
+
+def	youtube_download_video(url: str)->str:
+	global	dlId
+	dlId += 1
+	ydl_opt={
+		'outtmpl': '%(id)s.%(ext)s'
+	}
+	with YoutubeDL(ydl_opt) as ydl:
+		try:
+			info=ydl.extract_info(url, download=True)
+		except DownloadError:
+			return ('error')
+		title=info.get('id', None) + "." + info.get('ext', None)
 		return (title)
 
 def	anonfiles_upload(title: str)->str:
-	upload = anon.upload(os.path.join("./", title), progressbar = True)
+	upload=anon.upload("./" + title, progressbar=True)
 	print(upload.url.geturl())
 	return (upload.url.geturl())
 
@@ -46,27 +71,53 @@ async def	on_ready():
 	print(time.strftime("%H:%M:%S", time.localtime()), " : Bot has started")
 
 @bot.command(
-	name = "ytdl",
-	description = "Generate a download link for the given YouTube vvideo URL",
-	options = [
+	name="ytdl",
+	description="Generate a download link for the given YouTube vvideo URL",
+	options=[
 		interactions.Option(
-			name = "url",
-			description = "YouTube video URL",
-			type = interactions.OptionType.STRING,
-			required = True,
+			name="url",
+			description="YouTube video URL",
+			type=interactions.OptionType.STRING,
+			required=True,
 		),
 	],
 )
-async def ytdl(ctx: interactions.CommandContext, url: str):
+async def	ytdl(ctx: interactions.CommandContext, url: str):
 	if Find(url):
 		await ctx.send("The download link is being generated. . .")
-		title = youtube_download(url)
-		if title == 'error':
+		title=youtube_download_video(url)
+		if title=='error':
 			await ctx.edit("Please provide a valid video url")
 			return
-		link = anonfiles_upload(title)
+		link=anonfiles_upload(title)
 		os.remove(os.path.join("./", title))
 		await ctx.edit(f"The video can be downloaded from : {link}")
+	else:
+		await ctx.send("Please provide a valid url")
+
+@bot.command(
+	name="ytmp3",
+	description="Extract the given video's audio in mp3 and generate a download link",
+	options=[
+		interactions.Option(
+			name="url",
+			description="YouTube video URL",
+			type=interactions.OptionType.STRING,
+			required=True,
+		),
+	]
+)
+async def	ytmp3(ctx: interactions.CommandContext, url: str):
+	if Find(url):
+		await ctx.send("The video's audio is being extracted. . .")
+		title=youtube_download_mp3(url)
+		if title=='error':
+			await ctx.edit("Please provide a valid video url")
+			return
+		await ctx.edit("The download link is being generated. . .")
+		link=anonfiles_upload(title)
+		os.remove(os.path.join("./", title))
+		await ctx.edit(f"The audio can be downloaded from : {link}")
 	else:
 		await ctx.send("Please provide a valid url")
 
