@@ -71,6 +71,17 @@ async def	on_ready():
 	print(time.strftime("%H:%M:%S", time.localtime()), " : Bot has started")
 
 @bot.command(
+	name="ytdl_help",
+	description="Show commands",
+	options=[]
+)
+async def	ytdl_help(ctx: interactions.CommandContext):
+	embed=interactions.Embed(title="YTDL commands")
+	embed.add_field(name="/ytdl", value="Generate an Anonfiles download link from URL", inline=True)
+	embed.add_field(name="/ytmp3", value="Convert given video to mp3 and generate a download link", inline=True)
+	await ctx.send(embeds=embed)
+
+@bot.command(
 	name="ytdl",
 	description="Generate a download link for the given YouTube vvideo URL",
 	options=[
@@ -83,17 +94,23 @@ async def	on_ready():
 	],
 )
 async def	ytdl(ctx: interactions.CommandContext, url: str):
+	embedError=interactions.Embed()
+	embedError.add_field(name="ERROR", value="Please provide a valid video url")
+	embedDLGen=interactions.Embed()
+	embedDLGen.add_field(name="GENERATE", value="The download link is being generated. . .")
 	if Find(url):
-		await ctx.send("The download link is being generated. . .")
+		await ctx.send(embeds=embedDLGen)
 		title=youtube_download_video(url)
 		if title=='error':
-			await ctx.edit("Please provide a valid video url")
+			await ctx.edit(embeds=embedError)
 			return
 		link=anonfiles_upload(title)
+		embedLink=interactions.Embed()
+		embedLink.add_field(name="DOWNLOAD", value=link)
 		os.remove(os.path.join("./", title))
-		await ctx.edit(f"The video can be downloaded from : {link}")
+		await ctx.edit(embeds=embedLink)
 	else:
-		await ctx.send("Please provide a valid url")
+		await ctx.send(embeds=embedError)
 
 @bot.command(
 	name="ytmp3",
@@ -108,17 +125,25 @@ async def	ytdl(ctx: interactions.CommandContext, url: str):
 	]
 )
 async def	ytmp3(ctx: interactions.CommandContext, url: str):
+	embedAudioExtract=interactions.Embed()
+	embedAudioExtract.add_field(name="EXTRACT", value="The video's audio is being extracted. . .")
+	embedError=interactions.Embed()
+	embedError.add_field(name="ERROR", value="Please provide a valid video url")
+	embedDLGen=interactions.Embed()
+	embedDLGen.add_field(name="GENERATE", value="The download link is being generated. . .")
 	if Find(url):
-		await ctx.send("The video's audio is being extracted. . .")
+		await ctx.send(embeds=embedAudioExtract)
 		title=youtube_download_mp3(url)
 		if title=='error':
-			await ctx.edit("Please provide a valid video url")
+			await ctx.edit(embeds=embedError)
 			return
-		await ctx.edit("The download link is being generated. . .")
+		await ctx.edit(embeds=embedDLGen)
 		link=anonfiles_upload(title)
+		embedLink=interactions.Embed()
+		embedLink.add_field(name="DOWNLOAD", value=link)
 		os.remove(os.path.join("./", title))
-		await ctx.edit(f"The audio can be downloaded from : {link}")
+		await ctx.edit(embeds=embedLink)
 	else:
-		await ctx.send("Please provide a valid url")
+		await ctx.send(embeds=embedError)
 
 bot.start()
