@@ -2,6 +2,10 @@
 
 # Installation
 
+*	Verify that you have **`ffmpeg`** installed
+	*	`dpkg --get-selections | grep ffmpeg`
+	*	*if no output, run* `apt install ffmpeg`
+
 *	Install necessary modules from ***requirements.txt***
 	*	`pip install -r requirements.txt`
 
