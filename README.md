@@ -8,5 +8,3 @@
 *	Run `bash config.sh` to set your bot's private token in ***config.py***
 
 *	Launch the bot with `python3.8 main.py`
-
-*	Once the bot is up, generate an Anonfiles download link with `/ytdl <video_url>`
