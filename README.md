@@ -11,4 +11,4 @@
 
 *	Run `bash config.sh` to set your bot's private token in ***config.py***
 
-*	Launch the bot with `python3.8 ytdl.py`
+*	Launch the bot with `python3.10 ytdl.py`
