@@ -134,6 +134,7 @@ async def	ytmp3(ctx: interactions.CommandContext, url: str):
 		await ctx.send(embeds=embedAudioExtract)
 		title=youtube_download_mp3(url)
 		if title=='error':
+			print("FIRST ERROR")
 			return await ctx.edit(embeds=embedError)
 		await ctx.edit(embeds=embedDLGen)
 		link=anonfiles_upload(title)
@@ -142,6 +143,7 @@ async def	ytmp3(ctx: interactions.CommandContext, url: str):
 		os.remove(os.path.join("./", title))
 		await ctx.edit(embeds=embedLink)
 	else:
+		print("SECOND ERROR")
 		await ctx.send(embeds=embedError)
 
 bot.start()
