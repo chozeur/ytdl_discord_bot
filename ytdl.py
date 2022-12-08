@@ -14,6 +14,7 @@ from	yt_dlp			import	YoutubeDL
 from	yt_dlp.utils	import	DownloadError
 from	anonfile		import	AnonFile
 import	config
+import	sys
 
 bot=interactions.Client(token=config.token)
 anon=AnonFile()
@@ -134,7 +135,6 @@ async def	ytmp3(ctx: interactions.CommandContext, url: str):
 		await ctx.send(embeds=embedAudioExtract)
 		title=youtube_download_mp3(url)
 		if title=='error':
-			print("FIRST ERROR")
 			return await ctx.edit(embeds=embedError)
 		await ctx.edit(embeds=embedDLGen)
 		link=anonfiles_upload(title)
@@ -143,7 +143,6 @@ async def	ytmp3(ctx: interactions.CommandContext, url: str):
 		os.remove(os.path.join("./", title))
 		await ctx.edit(embeds=embedLink)
 	else:
-		print("SECOND ERROR")
 		await ctx.send(embeds=embedError)
 
 bot.start()
