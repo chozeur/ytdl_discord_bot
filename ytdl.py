@@ -102,15 +102,14 @@ async def	ytdl(ctx: interactions.CommandContext, url: str):
 		await ctx.send(embeds=embedDLGen)
 		title=youtube_download_video(url)
 		if title=='error':
-			await ctx.edit(embeds=embedError)
-			return
+			return await ctx.edit(embeds=embedError)
 		link=anonfiles_upload(title)
 		embedLink=interactions.Embed()
 		embedLink.add_field(name="DOWNLOAD", value=link)
 		os.remove(os.path.join("./", title))
-		await ctx.edit(embeds=embedLink)
+		return await ctx.edit(embeds=embedLink)
 	else:
-		await ctx.send(embeds=embedError)
+		return await ctx.send(embeds=embedError)
 
 @bot.command(
 	name="ytmp3",
@@ -135,8 +134,7 @@ async def	ytmp3(ctx: interactions.CommandContext, url: str):
 		await ctx.send(embeds=embedAudioExtract)
 		title=youtube_download_mp3(url)
 		if title=='error':
-			await ctx.edit(embeds=embedError)
-			return
+			return await ctx.edit(embeds=embedError)
 		await ctx.edit(embeds=embedDLGen)
 		link=anonfiles_upload(title)
 		embedLink=interactions.Embed()
