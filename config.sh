@@ -1,3 +1,5 @@
 #!/bin/bash
-echo "token : ";read token;
+
+echo "token : ";
+read token;
 > config.py echo "token = \"$token\"";
